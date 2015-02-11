@@ -26,10 +26,18 @@ class EditView
 	 */
 	__New(hWnd, nn:=1)
 	{
+		prev_DHW := A_DetectHiddenWindows
+		DetectHiddenWindows On
+		
 		WinGetClass, WinClass, ahk_id %hWnd%
 		if (WinClass != "Edit")
 			ControlGet hWnd, Hwnd,, Edit%nn%, ahk_id %hWnd%
-		this.__Handle := hWnd
+		
+		DetectHiddenWindows %prev_DHW%
+		if !DllCall("IsWindow", "Ptr", hWnd)
+			throw Exception("Invalid window handle", -1, hWnd)
+		
+		this.__Handle := hWnd + 0
 	}
 	/* Property: Len
 	 *     Retrieves the length of the text content of the Edit control or the
